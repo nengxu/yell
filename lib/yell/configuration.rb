@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+require 'erb'
 require 'yaml'
 
 module Yell #:nodoc:
@@ -9,7 +10,11 @@ module Yell #:nodoc:
   class Configuration
 
     def self.load!( file )
-      YAML.load_file( file )[ Yell.env ] || {}
+      # parse through ERB
+      yaml = ERB.new(File.read(file)).result
+
+      # parse through YAML
+      YAML.load(yaml)[Yell.env] || {}
     end
 
   end
