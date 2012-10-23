@@ -82,7 +82,7 @@ describe "running Yell multi-threaded" do
         Timecop.freeze( date + 86400*count )
         sleep 0.3
 
-        files = Dir[ fixture_path + '/*.log' ]
+        files = Dir[ fixture_path + '/*.*.log' ]
         files.size.should == 2
 
         # files.last.should match( datefile_pattern_for(Time.now) ) # today

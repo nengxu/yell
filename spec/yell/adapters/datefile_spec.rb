@@ -8,8 +8,13 @@ describe Yell::Adapters::Datefile do
     Timecop.freeze( Time.now )
   end
 
+  after do
+    # release time after each test
+    Timecop.return
+  end
+
   describe :filename do
-    let( :adapter ) { Yell::Adapters::Datefile.new(:filename => filename) }
+    let( :adapter ) { Yell::Adapters::Datefile.new(:filename => filename, :symlink => false) }
 
     it "should be replaced with date_pattern" do
       adapter.write( event )
@@ -45,16 +50,16 @@ describe Yell::Adapters::Datefile do
 
     it "should keep the specified number or files upon rollover" do
       adapter.write( event )
-      Dir[ fixture_path + '/*.log' ].size.should == 1
+      Dir[ fixture_path + '/*.*.log' ].size.should == 1
 
       Timecop.freeze( Time.now + 60 ) do
         adapter.write( event )
-        Dir[ fixture_path + '/*.log' ].size.should == 2
+        Dir[ fixture_path + '/*.*.log' ].size.should == 2
       end
 
       Timecop.freeze( Time.now + 120 ) do
         adapter.write( event )
-        Dir[ fixture_path + '/*.log' ].size.should == 2
+        Dir[ fixture_path + '/*.*.log' ].size.should == 2
       end
     end
   end

@@ -27,8 +27,8 @@ module Yell #:nodoc:
         # check whether to cleanup old files of the same pattern (default false)
         self.keep = options.fetch(:keep, false)
 
-        # check whether to symlink the otiginal filename (default false)
-        self.symlink = options.fetch(:symlink, false)
+        # check whether to symlink the otiginal filename (default true)
+        self.symlink = options.fetch(:symlink, true)
 
         @original_filename  = ::File.expand_path options.fetch(:filename, default_filename)
         options[:filename]  = @original_filename
@@ -61,8 +61,8 @@ module Yell #:nodoc:
       #   date_pattern = "%Y-week-%V"
       attr_accessor :date_pattern
 
-      # Tell the adapter to create a symlink onto the currently 
-      # active (timestamped) file. Upon rollover, the symlink is 
+      # Tell the adapter to create a symlink onto the currently
+      # active (timestamped) file. Upon rollover, the symlink is
       # set to the newly created file, and so on.
       #
       # @example
@@ -81,8 +81,8 @@ module Yell #:nodoc:
       attr_accessor :keep
 
       # You can suppress the first line of the logfile that contains
-      # the metadata. This is important upon rollover, because on *nix 
-      # systems, it is not possible to determine the creation time of a file, 
+      # the metadata. This is important upon rollover, because on *nix
+      # systems, it is not possible to determine the creation time of a file,
       # on the last access time. The header compensates this.
       #
       # @example
@@ -94,7 +94,7 @@ module Yell #:nodoc:
 
       # Determine whether to close the file handle or not.
       #
-      # It is based on the `:date_pattern` (can be passed as option upon initialize). 
+      # It is based on the `:date_pattern` (can be passed as option upon initialize).
       # If the current time hits the pattern, it closes the file stream.
       #
       # @return [Boolean] true or false
@@ -114,8 +114,8 @@ module Yell #:nodoc:
       # Removes old logfiles of the same date pattern.
       #
       # By reading the header of the files that match the date pattern, the
-      # adapter determines whether to remove them or not. If no header is present, 
-      # it makes the best guess by checking the last access time (which may result 
+      # adapter determines whether to remove them or not. If no header is present,
+      # it makes the best guess by checking the last access time (which may result
       # in false cleanups).
       def cleanup!
         files = Dir[ @original_filename.sub( /(\.\w+)?$/, ".*\\1" ) ].sort.select do |file|
@@ -168,7 +168,7 @@ module Yell #:nodoc:
         else
           # In case there is no header: we need to take a good guess
           #
-          # Since the pattern can not be determined, we will just return the Posix ctime. 
+          # Since the pattern can not be determined, we will just return the Posix ctime.
           # That is NOT the creatint time, so the value will potentially be wrong!
           [ ::File.ctime(file), nil ]
         end
